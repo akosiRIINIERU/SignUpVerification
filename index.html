@@ -4,144 +4,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#111827" />
-  <title>SECURTAP | Email Verification</title>
+  <title>SECURTAP | Email Confirmation</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 24px;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f3f4f6;
-      color: #111827;
+      font-family: Arial, sans-serif;
+      background: #f1f5f9;
+      color: #172033;
     }
 
     .card {
       width: 100%;
       max-width: 440px;
       padding: 36px 28px;
+      background: white;
+      border-radius: 20px;
       text-align: center;
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 24px;
-      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 12px 40px rgba(15, 23, 42, .08);
     }
 
     .logo {
-      width: 68px;
-      height: 68px;
-      margin: 0 auto 18px;
-      display: grid;
-      place-items: center;
-      border-radius: 20px;
-      background: #111827;
-      color: white;
-      font-size: 34px;
-      font-weight: bold;
-    }
-
-    h1 {
-      margin: 0;
       font-size: 27px;
+      font-weight: 800;
       letter-spacing: 2px;
+      color: #2563eb;
     }
 
-    .tagline {
-      margin: 9px 0 30px;
-      color: #6b7280;
-      font-size: 12px;
-      letter-spacing: 1.5px;
-    }
-
-    .status-icon {
-      width: 76px;
-      height: 76px;
-      margin: 0 auto 20px;
+    .icon {
+      margin: 24px auto 16px;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #dbeafe;
+      color: #2563eb;
       display: grid;
       place-items: center;
-      border-radius: 50%;
-      background: #dcfce7;
-      color: #15803d;
-      font-size: 42px;
+      font-size: 32px;
     }
 
-    h2 {
-      margin: 0 0 12px;
-      font-size: 23px;
-    }
-
-    p {
-      color: #6b7280;
-      font-size: 15px;
-      line-height: 1.7;
-    }
+    h1 { font-size: 25px; margin-bottom: 12px; }
+    p { color: #64748b; line-height: 1.6; }
 
     .button {
       display: block;
-      width: 100%;
       margin-top: 24px;
-      padding: 15px 18px;
-      border: 0;
-      border-radius: 12px;
-      background: #111827;
+      padding: 14px;
+      border-radius: 10px;
+      background: #2563eb;
       color: white;
       text-decoration: none;
-      font-size: 15px;
       font-weight: bold;
-      cursor: pointer;
     }
 
-    .button:hover {
-      background: #273449;
-    }
-
-    .secondary {
-      margin-top: 16px;
-      font-size: 13px;
-      color: #6b7280;
-    }
-
-    .hidden {
-      display: none;
-    }
+    .status { font-size: 14px; margin-top: 18px; }
   </style>
 </head>
 
 <body>
   <main class="card">
-    <div class="logo">S</div>
-    <h1>SECURTAP</h1>
-    <div class="tagline">SECURE ACCESS. VERIFIED IDENTITY.</div>
-
-    <div id="status-icon" class="status-icon">...</div>
-    <h2 id="heading">Verifying your email</h2>
+    <div class="logo">SECURTAP</div>
+    <div class="icon" id="icon">...</div>
+    <h1 id="heading">Confirming your email</h1>
     <p id="message">
-      Please wait while we securely verify your email address.
+      Please wait while we verify your email confirmation.
     </p>
-
-    <a id="open-app" class="button hidden"
-       href="securtapp://login-successful">
-      Open SECURTAP
-    </a>
-
-    <p id="secondary" class="secondary">
-      Please keep this page open.
-    </p>
+    <p class="status" id="status"></p>
+    <a class="button" id="action" href="#" hidden>Continue</a>
   </main>
 
   <script type="module">
     import { createClient } from
-      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-    const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 
     const supabase = createClient(
       SUPABASE_URL,
@@ -155,67 +99,90 @@
       }
     );
 
-    const heading = document.getElementById('heading');
-    const message = document.getElementById('message');
-    const icon = document.getElementById('status-icon');
-    const openApp = document.getElementById('open-app');
-    const secondary = document.getElementById('secondary');
+    const heading = document.getElementById("heading");
+    const message = document.getElementById("message");
+    const icon = document.getElementById("icon");
+    const status = document.getElementById("status");
+    const action = document.getElementById("action");
 
     function showError(text) {
-      icon.textContent = '!';
-      icon.style.background = '#fee2e2';
-      icon.style.color = '#b91c1c';
-      heading.textContent = 'Verification unsuccessful';
+      icon.textContent = "!";
+      heading.textContent = "Confirmation unsuccessful";
       message.textContent = text;
-      secondary.textContent =
-        'Request a new confirmation email from SECURTAP if your link has expired.';
+      status.textContent =
+        "Try opening the confirmation link from your email again.";
     }
 
-    async function verifyEmail() {
-      const params = new URLSearchParams(window.location.search);
-      const tokenHash = params.get('token_hash');
-      const type = params.get('type');
-
-      if (!tokenHash || type !== 'signup') {
-        showError(
-          'This confirmation link is missing required information or is not a signup link.'
-        );
-        return;
-      }
-
+    async function confirmEmail() {
       try {
-        const { error } = await supabase.auth.verifyOtp({
-          token_hash: tokenHash,
-          type: 'signup'
-        });
+        const params = new URLSearchParams(
+          window.location.search
+        );
 
-        if (error) {
-          throw error;
+        const hash = new URLSearchParams(
+          window.location.hash.slice(1)
+        );
+
+        // Support Supabase PKCE redirects if a code is provided.
+        const code = params.get("code");
+
+        if (code) {
+          const { error } =
+            await supabase.auth.exchangeCodeForSession(code);
+
+          if (error) throw error;
+        } else {
+          // Supabase's email link may return a session in the URL hash.
+          const accessToken = hash.get("access_token");
+          const refreshToken = hash.get("refresh_token");
+          const type = hash.get("type");
+
+          if (accessToken && refreshToken) {
+            const { error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken
+            });
+
+            if (error) throw error;
+          } else if (params.get("error")) {
+            throw new Error(
+              params.get("error_description") ||
+              params.get("error")
+            );
+          } else {
+            // A clean visit does not prove that confirmation succeeded.
+            throw new Error(
+              "No confirmation session was received. Open the original confirmation email link."
+            );
+          }
         }
 
-        icon.textContent = '✓';
-        heading.textContent = 'Email verified successfully!';
-        message.textContent =
-          'Your SECURTAP email address has been confirmed. You can now return to the app and sign in.';
-        openApp.classList.remove('hidden');
-        secondary.textContent =
-          'You can close this page after returning to SECURTAP.';
-
-        // Remove the one-time token from the visible URL.
+        // Clear authentication values from the visible address bar.
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
         );
+
+        icon.textContent = "✓";
+        heading.textContent = "Email confirmed!";
+        message.textContent =
+          "Your SECURTAP email address has been confirmed successfully. You can now return to the app and sign in.";
+        status.textContent = "Your account confirmation is complete.";
+
+        action.textContent = "Return to SECURTAP";
+        action.href = "https://YOUR-GITHUB-USERNAME.github.io/securtap-confirmation/";
+        action.hidden = false;
       } catch (error) {
-        console.error('Email verification failed:', error);
+        console.error("Email confirmation error:", error);
         showError(
-          'We could not verify this link. It may have expired or already been used.'
+          error.message ||
+          "We could not verify your email. The link may have expired or already been used."
         );
       }
     }
 
-    verifyEmail();
+    confirmEmail();
   </script>
 </body>
 </html>
